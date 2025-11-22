@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 Custom Event Tracking Demo</title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f3fa;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark {
+            background: #121212;
+            color: #e0e0e0;
+        }
+        header {
+            background: #4a6cf7;
+            padding: 25px;
+            text-align: center;
+            color: white;
+        }
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        body.dark .card {
+            background: #1e1e1e;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+        }
+        button {
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #3a57d6;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #4a6cf7;
+            margin-top: 0;
+        }
+        .product {
+            padding: 15px 20px;
+            border: 1px solid #e0e0ff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            margin-bottom: 10px;
+        }
+        .product:hover {
+            background: #eef1ff;
+        }
+        body.dark .product:hover {
+            background: #333;
+        }
+        footer {
+            text-align: center;
+            color: #777;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>GA4 Advanced Custom Events Demo</h1>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+</header>
+
+<div class="container">
+
+    <!-- Product Section -->
+    <div class="card">
+        <h2>Product Section</h2>
+        <div class="product" onclick="trackProductClick('Wireless Mouse')">
+            <h3>Wireless Mouse</h3>
+        </div>
+        <div class="product" onclick="trackProductClick('Gaming Headset')">
+            <h3>Gaming Headset</h3>
+        </div>
+        <button onclick="trackAddToCart('Wireless Mouse')">Add to Cart</button>
+        <button onclick="trackAddToCart('Gaming Headset')">Add to Cart</button>
+        <br><br>
+        <button onclick="trackCheckout()">Begin Checkout</button>
+        <button onclick="trackProceedPayment()">Proceed to Payment</button>
+        <button onclick="trackPurchase()">Complete Purchase</button>
+    </div>
+
+    <!-- Form Section -->
+    <div class="card">
+        <h2>Contact Form</h2>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Email Address" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Submit Form</button>
+        </form>
+    </div>
+
+    <!-- Video Section -->
+    <div class="card">
+        <h2>Video Section</h2>
+        <video id="demoVideo" width="100%" controls>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        </video>
+    </div>
+
+</div>
+
+<footer>
+    © GA4 Demo — Academic Use Only
+</footer>
+
+<script>
+    // Dark mode toggle
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark');
+    }
+
+    // Product Click
+    function trackProductClick(productName) {
+        gtag('event', 'product_click', { product_name: productName });
+        alert(`Product click: ${productName}`);
+    }
+
+    // Add to Cart
+    function trackAddToCart(item) {
+        gtag('event', 'add_to_cart', { item_name: item });
+        alert(`Added to cart: ${item}`);
+    }
+
+    // Begin Checkout
+    function trackCheckout() {
+        gtag('event', 'begin_checkout', { items: ['Wireless Mouse', 'Gaming Headset'] });
+        alert('Checkout started!');
+    }
+
+    // Proceed to Payment
+    function trackProceedPayment() {
+        gtag('event', 'proceed_to_payment', { step: 2 });
+        alert('Proceed to Payment!');
+    }
+
+    // Complete Purchase
+    function trackPurchase() {
+        gtag('event', 'purchase', { items: ['Wireless Mouse', 'Gaming Headset'], value: 99.98 });
+        alert('Purchase completed!');
+    }
+
+    // Form Submission
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        gtag('event', 'form_submit', {
+            form_id: 'contact_form',
+            user_name: document.getElementById("name").value
+        });
+        alert('Form submitted!');
+    });
+
+    // Video Play
+    document.getElementById("demoVideo").addEventListener("play", function() {
+        gtag('event', 'video_play', { video_title: 'Demo Video' });
+    });
+
+    // Scroll Tracking
+    window.addEventListener('scroll', function() {
+        let scrollPercent = Math.floor((window.scrollY + window.innerHeight) / document.body.scrollHeight * 100);
+        if (scrollPercent > 25 && !window.scroll25) {
+            gtag('event', 'scroll', { percent: 25 });
+            window.scroll25 = true;
+        }
+        if (scrollPercent > 50 && !window.scroll50) {
+            gtag('event', 'scroll', { percent: 50 });
+            window.scroll50 = true;
+        }
+        if (scrollPercent > 75 && !window.scroll75) {
+            gtag('event', 'scroll', { percent: 75 });
+            window.scroll75 = true;
+        }
+        if (scrollPercent > 90 && !window.scroll90) {
+            gtag('event', 'scroll', { percent: 90 });
+            window.scroll90 = true;
+        }
+    });
+</script>
+
+</body>
+</html>
